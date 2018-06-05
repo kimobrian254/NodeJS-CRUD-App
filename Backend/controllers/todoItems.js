@@ -1,7 +1,7 @@
 const TodoItem = require("../models").TodoItem;
 
 let findTodoItemByTodoIdAndItemId = (todoId, todoItemId) => {
-  return TodoItem.findOne({where: { id: todoItemId, todoId }})
+  return TodoItem.findOne({id: todoItemId, todoId })
     .then(todoItem => {
       if (!todoItem) {
         return  Promise.reject({
@@ -34,7 +34,7 @@ module.exports = {
       .catch(err=> next(err));
   },
   find: (req, res, next) =>{
-    return TodoItem.find({where: { id: req.params.id }})
+    return TodoItem.findOne({ id: req.params.id })
       .then(todoItem=> res.status(200).json(todoItem))
       .catch(err=> next(err));
   },

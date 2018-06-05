@@ -1,0 +1,29 @@
+{
+  "name": "crud",
+  "version": "0.0.0",
+  "description": "Simple CRUD app using Sequelize && Postgres",
+  "main": "app.js",
+  "author": "kimobrian254",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "nodemon ./bin/www",
+    "lint:fix": "./node_modules/.bin/eslint --fix . --ext .js"
+  },
+  "dependencies": {
+    "bcrypt": "^2.0.1",
+    "cookie-parser": "^1.4.3",
+    "dotenv": "^5.0.1",
+    "express": "^4.16.3",
+    "http-errors": "^1.6.3",
+    "morgan": "^1.9.0",
+    "pg": "^7.4.3",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^4.37.10",
+    "uuid": "^3.2.1",
+    "winston": "^2.4.2"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1"
+  }
+}

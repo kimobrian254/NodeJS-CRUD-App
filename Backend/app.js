@@ -18,8 +18,22 @@ app.use(auth.passport.initialize());
 
 router.post("/signup", auth.signupUser);
 router.post("/login", auth.loginUser);
-router.post("/secure", auth.passport.authenticate("jwt", { session: false}), (req, res)=> {
-  res.json({message: "Success! You can not see this without a token"});
+
+let authMiddleware = (req, res, next)=> {
+  auth.passport.authenticate("jwt", { session: false }, 
+    (err, user/*, info*/) => {
+      if (err) return next(err);
+      if (!user) {
+        return res.status(401).json({ message: "Invalid Login Credentials" });
+      }
+      next();
+    })(req, res, next);
+};
+
+router.use(authMiddleware);
+
+router.get("/secure", (req, res/*, next*/) => {
+  res.json({ message: "Success! You can not see this without a token" });
 });
 
 require("./routes")(router);
@@ -30,7 +44,7 @@ app.use("*", (req, res) => {
   res.status(404).send(createError(404));
 });
 
-app.use((err, req, res, next) => {
+app.use((err, req, res/*, next*/) => {
   loggerW.error(err);
   res.status(500).send(createError(500, "Something Broke! Try Again"));
 });

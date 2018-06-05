@@ -16,12 +16,11 @@ let opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = process.env.AUTH_SECRET;
 passport.use(new JwtStrategy(opts, (jwt_payload, done)=> {
-  User.findOne({id: jwt_payload.id}).then((user)=> {
-    if (!user) {
-      return done(null, false);
-    }
+  User.findOne({ id: jwt_payload.id }).then((user)=> {
+    if (!user) return done(null, false);
+    delete user.dataValues.password;
     return done(null, user);
-  }).catch(err=> done(err));
+  }).catch(err=>  done(null, err));
 }));
 
 module.exports = {
@@ -29,7 +28,9 @@ module.exports = {
   loginUser: (req, res) => {
     let { email, password } = req.body;
     return User.findOne({ email }).then( (user) => {
-      if(!user) return res.status(401).json({ error: true, message: "Invalid Login Credentials" });
+      if(!user) return res.status(401).json({ 
+        error: true, message: "Invalid Login Credentials" 
+      });
       
       const match =  bcrypt.compare(password, user.dataValues.password);
       delete user.dataValues.password;
@@ -39,7 +40,9 @@ module.exports = {
         let token = jwt.sign(user.dataValues, opts.secretOrKey);
         return res.status(200).json({ message: "Login Successful", token });
       }
-      else return res.status(401).json({error: true, message: "Invalid Login Credentials"});
+      else return res.status(401).json({ 
+        error: true, message: "Invalid Login Credentials" 
+      });
     });
   },
   signupUser: (req, res) => {
@@ -51,15 +54,18 @@ module.exports = {
     if(!isFieldValid(password)) { errors["password"] = "Required"; }
     if(Object.keys(errors).length === 0 && errors.constructor === Object) {
       let hashedPassword = bcrypt.hash(password, 10);
-      return User.create({ firstName, lastName, email, password: hashedPassword }).then((user)=>{
-        delete user.dataValues.password;
-        loggerW.info(JSON.stringify(user));
-        return res.status(200).json({"message": "Registered successfully"});
-      }).catch(err=> {
-        loggerW.error("Error:>>", err);
-        return res.status(500).json({"error": "Something went wrong!"});
-      });
+      return User.create({ 
+        firstName, lastName, email, password: hashedPassword 
+      })
+        .then((user)=>{
+          delete user.dataValues.password;
+          loggerW.info(JSON.stringify(user));
+          return res.status(200).json({ "message": "Registered successfully" });
+        }).catch(err=> {
+          loggerW.error("Error:>>", err);
+          return res.status(500).json({ "error": "Something went wrong!" });
+        });
     }
-    return res.status(400).json(Object.assign({}, {error: true }, errors));
+    return res.status(400).json(Object.assign({}, { error: true }, errors));
   }
 };

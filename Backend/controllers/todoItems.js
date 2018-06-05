@@ -1,7 +1,7 @@
 const TodoItem = require("../models").TodoItem;
 
 let findTodoItemByTodoIdAndItemId = (todoId, todoItemId) => {
-  return TodoItem.findOne({id: todoItemId, todoId })
+  return TodoItem.findOne({ id: todoItemId, todoId })
     .then(todoItem => {
       if (!todoItem) {
         return  Promise.reject({
@@ -29,7 +29,7 @@ module.exports = {
       .catch(error => next(error));
   },
   list: (req, res, next) =>{
-    return TodoItem.findAll({where: { todoId: req.params.todoId }})
+    return TodoItem.findAll({ where: { todoId: req.params.todoId }})
       .then(todoItems=> res.status(200).json(todoItems))
       .catch(err=> next(err));
   },
@@ -39,27 +39,29 @@ module.exports = {
       .catch(err=> next(err));
   },
   update: (req, res, next) => {
-    return findTodoItemByTodoIdAndItemId(req.params.todoId, req.params.itemId).then(todoItem=> {
-      return todoItem
-        .update(req.body, { fields: Object.keys(req.body) })
-        .then((updated) => res.status(200).send(updated))  // Send back the updated todo.
-        .catch((error) => next(error));
-    }).catch(err=> {
-      return res.status(err.status).send({
-        message: err.message,
+    return findTodoItemByTodoIdAndItemId(req.params.todoId, req.params.itemId)
+      .then(todoItem=> {
+        return todoItem
+          .update(req.body, { fields: Object.keys(req.body) })
+          .then((updated) => res.status(200).send(updated))  // Send back the updated todo.
+          .catch((error) => next(error));
+      }).catch(err=> {
+        return res.status(err.status).send({
+          message: err.message,
+        });
       });
-    });
   },
   delete: (req, res, next) => {
-    return findTodoItemByTodoIdAndItemId(req.params.todoId, req.params.itemId).then(todoItem=> {
-      return todoItem
-        .destroy()
-        .then(() => res.status(204).send())
-        .catch(error => next(error));
-    }).catch(err=> {
-      return res.status(err.status).send({
-        message: err.message,
+    return findTodoItemByTodoIdAndItemId(req.params.todoId, req.params.itemId)
+      .then(todoItem=> {
+        return todoItem
+          .destroy()
+          .then(() => res.status(204).send())
+          .catch(error => next(error));
+      }).catch(err=> {
+        return res.status(err.status).send({
+          message: err.message,
+        });
       });
-    });
   }
 };

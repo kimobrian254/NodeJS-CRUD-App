@@ -27,8 +27,10 @@ module.exports = (router) => {
     .delete(todosController.destroy);
 
   router.route("/todos/:todoId/items")
-    .all(((req, res)=> res.status(405).send({ message: "Method Not Allowed" })));
+    .all(((req, res)=> res.status(405)
+      .send({ message: "Method Not Allowed" })));
 
   router.route("/todos")
-    .all(((req, res)=> res.status(405).send({ message: "Method Not Allowed" })));
+    .all(((req, res)=> res.status(405)
+      .send({ message: "Method Not Allowed" })));
 };
